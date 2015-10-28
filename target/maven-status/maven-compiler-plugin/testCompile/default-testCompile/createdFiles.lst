@@ -1,8 +1,12 @@
 encryptor1\DoubleEncryptionTest.class
+encryptor1\EncryptionAlgorithmGetKeyStrengh$1.class
 encryptor1\KeyComparatorTest$1.class
 encryptor1\FileOperationsTest.class
 encryptor1\EncryptionAlgorithmDecryptTest.class
 encryptor1\KeyComparatorTest.class
 encryptor1\DoubleEncryptionTest$1.class
 encryptor1\EncryptionAlgorithmEncryptTest.class
+encryptor1\RepeatEncryptionTest.class
 encryptor1\EncryptionAlgorithmEncryptWithKeyTest.class
+encryptor1\EncryptionAlgorithmGetKeyStrengh.class
+encryptor1\RepeatEncryptionTest$1.class

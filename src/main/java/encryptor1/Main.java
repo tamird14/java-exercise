@@ -16,8 +16,8 @@ import encryptor1.Exceptions.WrongPath;
 public class Main {
     public static void main(String[] args)
             throws IOException, InvalidEncryptionKeyException, WrongPath {
-        EncryptionAlgorithm re = new ShiftMultiplyEncryption();
-        FileEncryptor fileEncryptor = new FileEncryptor(re);
+        EncryptionAlgorithm EA = new DoubleEncryption(new ShiftUpEncryption());
+        FileEncryptor fileEncryptor = new FileEncryptor(EA);
         Scanner in = new Scanner(System.in);
         String action = getAction(in);
         String path = "";
