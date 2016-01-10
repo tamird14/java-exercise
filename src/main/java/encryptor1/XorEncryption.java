@@ -1,38 +1,35 @@
 package encryptor1;
 
-public class XorEncryption extends Encryption {
+import java.io.IOException;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see encryptor1.Encryption#addKey(java.lang.String, int)
-     */
-    @Override
-    protected String addKey(String data, int key) {
-        String newStr = "";
-        for (char ch : data.toCharArray()) {
-            newStr += (char) (Math.floorMod(ch ^ key, 256));
-        }
-        return newStr;
-    }
+import encryptor1.Exceptions.InvalidEncryptionKeyException;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see encryptor1.Encryption#removeKey(java.lang.String, int)
-     */
-    @Override
-    protected String removeKey(String data, int key) {
-        return addKey(data, key);
-    }
+public class XorEncryption extends IntegerEncryption {
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see encryptor1.Encryption#generateKey()
-     */
-    @Override
-    protected int generateKey() {
-        return ((int) ((Math.random() * Integer.MAX_VALUE) + 1));
-    }
+	public XorEncryption() {
+		super();
+	}
+
+	public XorEncryption(int key) {
+		super(key);
+	}
+
+	public String encrypt(String data, Integer key) throws IOException {
+		act = new EncryptUpAction(data, key);
+		String encryptedData = act.performAction();
+		return encryptedData;
+	}
+
+	public String decrypt(String data, String keyString)
+			throws InvalidEncryptionKeyException {
+		try {
+			int key = Integer.parseInt(keyString);
+			act = new XorAction(data, key);
+			String decryptedData = act.performAction();
+			return decryptedData;
+		} catch (NumberFormatException e) {
+			throw new InvalidEncryptionKeyException();
+		}
+	}
+
 }

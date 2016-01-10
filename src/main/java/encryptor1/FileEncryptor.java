@@ -4,43 +4,63 @@
 package encryptor1;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
-import encryptor1.Exceptions.InvalidEncryptionKeyException;
-import encryptor1.Exceptions.WrongPath;
+import encryptor1.Exceptions.*;
+import java.util.Observable;
 
 /**
  * @author Tamir
  *
  */
-public class FileEncryptor {
-    private EncryptionAlgorithm EA;
+public class FileEncryptor<T> extends Observable {
+	private IEncryptionAlgorithm<T> EA;
+	private T key;
 
-    public FileEncryptor(EncryptionAlgorithm EA) {
-        this.EA = EA;
-    }
+	public FileEncryptor(IEncryptionAlgorithm<T> EA, T key) {
+		this.EA = EA;
+		this.key = key;
+	}
 
-    public void encryptFile(String filePath) throws IOException, WrongPath {
-        String data = FileOperations.getData(filePath);
-        ArrayList<String> encryptedData = EA.encrypt(data);
-        String newFilePath = FileOperations.storeNewData(encryptedData.get(1),
-                filePath, FileOperations.Action.ENCRYPT);
-        System.out.println(
-                "The location of the encrypted file is: " + newFilePath);
-        String keyPath = FileOperations.storeKey(filePath,
-                encryptedData.get(0));
-        System.out.println("The location of the key file is: " + keyPath);
-    }
+	public void encryptFile(String filePath, String newFilePath, boolean storeKey) throws IOException, WrongFilePath {
+		String data = FileOperations.getData(filePath);
+		EncryptionLogEventArgs args = new EncryptionLogEventArgs(
+				"encryption started", filePath, newFilePath,
+				this.EA.toString());
+		setChanged();
+		notifyObservers(args);
+		String encryptedData = EA.encrypt(data, key);
+		args.setEvent("encryption ended");
+		setChanged();
+		notifyObservers(args);
+		endEncryption(filePath, newFilePath, encryptedData, storeKey);
+	}
 
-    public void decryptFile(String filePath, String keyPath)
-            throws IOException, InvalidEncryptionKeyException, WrongPath {
-        String data = FileOperations.getData(filePath);
-        String key = FileOperations.getData(keyPath);
-        String decryptedData = EA.decrypt(data, key);
-        String newFilePath = FileOperations.storeNewData(decryptedData,
-                filePath, FileOperations.Action.DECRYPT);
-        System.out.println(
-                "The location of the decrypted file is: " + newFilePath);
-    }
+	public void endEncryption(String filePath, String newFilePath,
+			String encryptedData, boolean storeKey) throws IOException {
+		FileOperations.writeToFile(newFilePath, encryptedData);
+		if (storeKey){
+			String keyPath = FileOperations.storeKey(filePath, key.toString());
+			System.out.println("The location of the key file is: " + keyPath);
+		}
+	}
+
+	public void decryptFile(String filePath, String keyPath)
+			throws IOException, InvalidEncryptionKeyException, WrongFilePath {
+		String data = FileOperations.getData(filePath);
+		String key = FileOperations.getData(keyPath);
+		String newFilePath = FileOperations.getDecryptedFileName(filePath);
+		EncryptionLogEventArgs args = new EncryptionLogEventArgs(
+				"decryption started", filePath, newFilePath,
+				this.EA.toString());
+		setChanged();
+		notifyObservers(args);
+		String decryptedData = EA.decrypt(data, key);
+		args.setEvent("decryption_ended");
+		setChanged();
+		notifyObservers(args);
+		FileOperations.writeToFile(newFilePath, decryptedData);
+		System.out.println(
+				"The location of the decrypted file is: " + newFilePath);
+	}
 
 }

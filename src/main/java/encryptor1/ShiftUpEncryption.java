@@ -3,41 +3,58 @@
  */
 package encryptor1;
 
+import java.io.IOException;
+
+import encryptor1.Exceptions.InvalidEncryptionKeyException;
+
 /**
  * @author Tamir
  *
  */
-public class ShiftUpEncryption extends Encryption {
+public class ShiftUpEncryption extends IntegerEncryption {
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see encryptor1.Encryption#generateKey()
-     */
-    protected int generateKey() {
-        return ((int) ((Math.random() * Integer.MAX_VALUE) + 1));
-    }
+	public ShiftUpEncryption() {
+		super();
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see encryptor1.Encryption#addKey(java.lang.String, int)
-     */
-    protected String addKey(String data, int key) {
-        String newStr = "";
-        for (char ch : data.toCharArray()) {
-            newStr += (char) (Math.floorMod(ch + key, 128));
-        }
-        return newStr;
-    }
+	public ShiftUpEncryption(int key) {
+		super(key);
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see encryptor1.Encryption#removeKey(java.lang.String, int)
-     */
-    protected String removeKey(String data, int key) {
-        return addKey(data, -key);
-    }
+	// public ArrayList<String> encrypt(String data, Integer key, boolean reset)
+	// throws IOException {
+	// if (reset) {
+	// if (randomKey)
+	// act = new EncryptUpAction(data);
+	// else
+	// act = new EncryptUpAction(data, key);
+	// } else {
+	// act.changeData(data);
+	// }
+	// String encryptedData = act.performAction();
+	// ArrayList<String> keyData = new ArrayList<String>();
+	// keyData.add(Integer.toString(act.getKey()));
+	// keyData.add(encryptedData);
+	// return keyData;
+	// }
+
+	public String encrypt(String data, Integer key) throws IOException {
+		act = new EncryptUpAction(data, key);
+		String encryptedData = act.performAction();
+		return encryptedData;
+	}
+
+	public String decrypt(String data, String keyString)
+			throws InvalidEncryptionKeyException {
+		int key = 0;
+		try {
+			key = Integer.parseInt(keyString);
+		} catch (NumberFormatException e) {
+			throw new InvalidEncryptionKeyException();
+		}
+		act = new DecryptUpAction(data, key);
+		String decryptedData = act.performAction();
+		return decryptedData;
+	}
 
 }

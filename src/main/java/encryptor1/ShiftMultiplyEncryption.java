@@ -3,101 +3,58 @@
  */
 package encryptor1;
 
+import java.io.IOException;
+
+import encryptor1.Exceptions.InvalidEncryptionKeyException;
+
 /**
  * @author Tamir
  *
  */
-public class ShiftMultiplyEncryption extends Encryption
-        implements EncryptionAlgorithm {
+public class ShiftMultiplyEncryption extends IntegerEncryption {
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see encryptor1.Encryption#generateKey()
-     */
-    @Override
-    protected int generateKey() {
-        int key = (int) ((Math.random() * 256) + 1);
-        return key;
-    }
+	public ShiftMultiplyEncryption() {
+		super();
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see encryptor1.Encryption#addKey(java.lang.String, int)
-     */
-    @Override
-    protected String addKey(String data, int key) {
-        String newStr = "";
-        int encrypt_key = powMod(5, key, 256);
-        for (char ch : data.toCharArray()) {
-            newStr += (char) (Math.floorMod(ch * encrypt_key, 256));
-        }
-        return newStr;
-    }
+	public ShiftMultiplyEncryption(int key) {
+		super(key);
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see encryptor1.Encryption#removeKey(java.lang.String, int)
-     */
-    @Override
-    protected String removeKey(String data, int key) {
-        String newStr = "";
-        int modulu = 256;
-        int encrypt_key = powMod(5, key, modulu);
-        int decrypt_key = inverse(encrypt_key, modulu);
-        for (char ch : data.toCharArray()) {
-            newStr += (char) (Math.floorMod(ch * decrypt_key, modulu));
-        }
-        return newStr;
-    }
+	// public ArrayList<String> encrypt(String data, boolean reset) throws
+	// IOException {
+	// if (reset) {
+	// if (randomKey)
+	// act = new EncryptMultiplyAction(data);
+	// else
+	// act = new EncryptMultiplyAction(data, key);
+	// } else {
+	// act.changeData(data);
+	// }
+	// String encryptedData = act.performAction();
+	// ArrayList<String> keyData = new ArrayList<String>();
+	// keyData.add(Integer.toString(act.getKey()));
+	// keyData.add(encryptedData);
+	// return keyData;
+	// }
 
-    /**
-     * @param p
-     * @param q
-     * @return
-     */
-    private int[] gcd(int p, int q) {
-        if (q == 0)
-            return new int[] { p, 1, 0 };
-        int[] vals = gcd(q, p % q);
-        int d = vals[0];
-        int a = vals[2];
-        int b = vals[1] - (p / q) * vals[2];
-        return new int[] { d, a, b };
-    }
+	public String encrypt(String data, Integer key) throws IOException {
+		act = new EncryptMultiplyAction(data);
+		String encryptedData = act.performAction();
+		return encryptedData;
+	}
 
-    /**
-     * @param k
-     * @param n
-     * @return
-     */
-    private int inverse(int k, int n) {
-        int[] vals = gcd(k, n);
-        int d = vals[0];
-        int a = vals[1];
-        // int b = vals[2];
-        if (d > 1) {
-            System.out.println("Inverse does not exist.");
-            return 0;
-        }
-        if (a > 0)
-            return a;
-        return n + a;
-    }
+	public String decrypt(String data, String keyString)
+			throws InvalidEncryptionKeyException {
+		int key = 0;
+		try {
+			key = Integer.parseInt(keyString);
+		} catch (NumberFormatException e) {
+			throw new InvalidEncryptionKeyException();
+		}
+		this.act = new DecryptMultiplyAction(data, key);
+		String decryptedData = act.performAction();
+		return decryptedData;
+	}
 
-    /**
-     * @param a
-     * @param b
-     * @param n
-     * @return
-     */
-    private int powMod(int a, int b, int n) {
-        int pow = 1;
-        for (int i = 0; i < b; i++) {
-            pow = Math.floorMod(pow * a, n);
-        }
-        return pow;
-    }
 }

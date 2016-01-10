@@ -14,10 +14,10 @@ import org.junit.runners.Parameterized.Parameters;
 import encryptor1.Exceptions.InvalidEncryptionKeyException;
 
 @RunWith(Parameterized.class)
-public class EncryptionAlgorithmDecryptTest {
+public class EncryptionAlgorithmDecryptTest<T> {
 
     @Parameter
-    public EncryptionAlgorithm EA;
+    public IEncryptionAlgorithm<T> EA;
     @Parameter(value = 1)
     public String expected;
 

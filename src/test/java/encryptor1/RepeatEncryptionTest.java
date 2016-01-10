@@ -11,30 +11,22 @@ import encryptor1.Exceptions.InvalidEncryptionKeyException;
 
 public class RepeatEncryptionTest {
 
-	EncryptionAlgorithm EA = new EncryptionAlgorithm() {
+	Encryption EA = new Encryption() {
 
 		public int getKeyStrengh() {
 			return 42;
 		}
 
-		public String encryptWithKey(String data, int key) throws IOException {
-			String encryptedData = "";
-            if (data.equals("a")) {
-            	encryptedData = "b";
-            } else if (data.equals("b")) {
-            	encryptedData = "c";
-            } else if (data.equals("c")) {
-            	encryptedData = "d";
-            } else {
-            	encryptedData = "e";
-            }
-            return encryptedData;
-		}
-
-		public ArrayList<String> encrypt(String data) throws IOException {
+		public ArrayList<String> encrypt(String data, boolean reset)
+				throws IOException {
 			ArrayList<String> returnedValues = new ArrayList<String>();
 			returnedValues.add("1");
-			returnedValues.add("b");
+			if (data == "a")
+				returnedValues.add("b");
+			else if (data == "b")
+				returnedValues.add("c");
+			else
+				returnedValues.add("d");
 			return returnedValues;
 		}
 
@@ -54,8 +46,9 @@ public class RepeatEncryptionTest {
 	public void testEncrypt() throws IOException {
 		String data = "a";
 		String expectedKey = "1";
-		String expected = "e";
-		ArrayList<String> actual = new RepeatEncryption(4, EA).encrypt(data);
+		String expected = "d";
+		ArrayList<String> actual = new RepeatEncryption(3, EA).encrypt(data,
+				true);
 		assertEquals(expectedKey, actual.get(0));
 		assertEquals(expected, actual.get(1));
 	}
@@ -66,15 +59,6 @@ public class RepeatEncryptionTest {
 		String key = "1";
 		String expected = "d";
 		String actual = new RepeatEncryption(2, EA).decrypt(data, key);
-		assertEquals(expected, actual);
-	}
-
-	@Test
-	public void testEncryptWithKey() throws IOException {
-		String data = "a";
-		int key = 1;
-		String expected = "d";
-		String actual = new RepeatEncryption(3, EA).encryptWithKey(data, key);
 		assertEquals(expected, actual);
 	}
 

@@ -3,7 +3,6 @@ package encryptor1;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -16,46 +15,41 @@ import org.junit.runners.Parameterized.Parameters;
 import encryptor1.Exceptions.InvalidEncryptionKeyException;
 
 @RunWith(Parameterized.class)
-public class EncryptionAlgorithmGetKeyStrengh {
+public class EncryptionAlgorithmGetKeyStrengh<T> {
 
-    @Parameter
-    public EncryptionAlgorithm EA;
-    @Parameter(value = 1)
-    public int expected;
+	@Parameter
+	public IEncryptionAlgorithm<T> EA;
+	@Parameter(value = 1)
+	public int expected;
 
-    @Parameters
-    public static Collection<Object[]> data() {
-        Object[][] data = new Object[][] { { new ShiftUpEncryption(), 3 },
-                { new XorEncryption(), 3 },
-                { new ShiftMultiplyEncryption(), 3 },
-                { new EncryptionAlgorithm() {
+	@Parameters
+	public static Collection<Object[]> data() {
+		Object[][] data = new Object[][] { { new ShiftUpEncryption(), 3 },
+				{ new XorEncryption(), 3 },
+				{ new ShiftMultiplyEncryption(), 3 },
+				{ new IEncryptionAlgorithm<Integer>() {
 
-                    public int getKeyStrengh() {
-                        return 100;
-                    }
+					public int getKeyStrengh() {
+						return 100;
+					}
 
-                    public String encryptWithKey(String data, int key)
-                            throws IOException {
-                        return null;
-                    }
+					public String encrypt(String data, Integer key)
+							throws IOException {
+						return null;
+					}
 
-                    public ArrayList<String> encrypt(String data)
-                            throws IOException {
-                        return null;
-                    }
+					public String decrypt(String data, String keyString)
+							throws InvalidEncryptionKeyException {
+						return null;
+					}
+				}, 100 } };
+		return Arrays.asList(data);
+	}
 
-                    public String decrypt(String data, String keyString)
-                            throws InvalidEncryptionKeyException {
-                        return null;
-                    }
-                }, 100 } };
-        return Arrays.asList(data);
-    }
-
-    @Test
-    public void testGetKeyStrengh() {
-        int actual = EA.getKeyStrengh();
-        assertEquals(expected, actual);
-    }
+	@Test
+	public void testGetKeyStrengh() {
+		int actual = EA.getKeyStrengh();
+		assertEquals(expected, actual);
+	}
 
 }
