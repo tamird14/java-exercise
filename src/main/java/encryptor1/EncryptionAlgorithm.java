@@ -17,7 +17,7 @@ public interface EncryptionAlgorithm {
     public ArrayList<String> encrypt(String data, boolean reset) throws IOException;
 
     public String decrypt(String data, String keyString)
-            throws InvalidEncryptionKeyException;
+            throws InvalidEncryptionKeyException;sdfhdfhdfhdfhd
 
     public int getKeyStrengh();
 
